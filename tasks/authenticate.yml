@@ -1,0 +1,35 @@
+---
+
+- name: acquire auth roken
+  block:
+
+    - name: acquire auth token
+      ovirt.ovirt.ovirt_auth:
+        url: "{{ ovirt_url }}"
+        username: "{{ ovirt_user }}"
+        password: "{{ ovirt_pass }}"
+        insecure: true
+
+    - name: display auth token
+      ansible.builtin.debug:
+        var: ovirt_auth
+        verbosity: 1
+
+  when: ovirt_task == "acquire_token"
+
+- name: release auth token
+  block:
+
+    - name: release auth token
+      ovirt.ovirt.ovirt_auth:
+        ovirt_auth: "{{ ovirt_token }}"
+        state: absent
+
+    - name: display auth token
+      ansible.builtin.debug:
+        var: ovirt_auth
+        verbosity: 1
+
+  when: ovirt_task == "release_token"
+
+...
