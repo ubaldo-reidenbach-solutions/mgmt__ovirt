@@ -1,8 +1,8 @@
 ---
 
-ovirt_url: https://chen.ursi.int/ovirt-engine/api
-ovirt_user: 'admin@ovirt@internalsso'
-ovirt_pass: 'r00tb33r'
-#insecure: true
+ovirt_url: https://ovirt.server.fqdn/ovirt-engine/api
+ovirt_user: admin@ovirt@internalsso
+ovirt_pass: passwordGoesHere
+ovirt_ssl_insecure: true
 
 ...
