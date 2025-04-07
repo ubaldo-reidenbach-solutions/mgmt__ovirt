@@ -1,0 +1,20 @@
+---
+
+- name: ensure tasks run on the ansible container
+  block:
+
+    - name: acquire ovirt auth token
+      ovirt.ovirt.ovirt_auth:
+        url: "{{ ovirt_url }}"
+        username: "{{ ovirt_user }}"
+        password: "{{ ovirt_pass }}"
+        insecure: true
+
+    - name: display ovirt auth token
+      ansible.builtin.debug:
+        var: ovirt_auth
+        verbosity: 1
+
+  delegate_to: localhost
+
+...

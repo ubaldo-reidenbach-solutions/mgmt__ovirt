@@ -1,0 +1,53 @@
+---
+
+- name: clone vm from template
+  ovirt.ovirt.ovirt_vm:
+    auth: "{{ ovirt_auth }}"
+    name: "{{ inventory_hostname }}"
+    template: "{{ ovirt_vm_tmpl }}"
+    cluster: "{{ ovirt_vm_clust }}"
+    storage_domain: "{{ ovirt_vm_store }}"
+    cpu_cores: "{{ ovirt_vm_cpu }}"
+    memory: "{{ ovirt_vm_ram }}"
+    high_availability: "{{ ovirt_vm_ha }}"
+    clone: true
+    state: present
+    timeout: 600
+  delegate_to: localhost
+
+- name: configure vm with cloud init
+  ovirt.ovirt.ovirt_vm:
+    auth: "{{ ovirt_auth }}"
+    name: "{{ inventory_hostname }}"
+    state: running
+    cloud_init:
+      host_name: "{{ inventory_hostname }}"
+      nic_boot_protocol: "{{ ovirt_net_proto }}"
+      nic_ip_address: "{{ ansible_host }}"
+      nic_netmask: "{{ ovirt_net_mask }}"
+      nic_gateway: "{{ ovirt_net_gw }}"
+      nic_name: "{{ ovirt_net_dev }}"
+      dns_servers: "{{ ovirt_net_dns }}"
+      user_name: "{{ ovirt_vm_user }}"
+      root_password: "{{ ovirt_vm_pass }}"
+      regenerate_ssh_keys: true
+      custom_script: |
+        users:
+          - name: {{ ansible_ssh_user }}
+            passwd: '{{ ansible_pass.stdout }}'
+            lock_passwd: false
+            groups: wheel
+            ssh_authorized_keys:
+              - '{{ lookup('ansible.builtin.file', playbook_dir + '/keys/ssh/default.pub') }}'
+  register: cloudinit_result
+  until: cloudinit_result is not failed
+  retries: 3
+  delay: 10
+  delegate_to: localhost
+
+- name: display cloud init result
+  ansible.builtin.debug:
+    var: cloudinit_result
+    verbosity: 1
+
+...
