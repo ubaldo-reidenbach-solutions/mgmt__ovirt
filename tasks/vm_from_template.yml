@@ -3,7 +3,7 @@
 - name: clone vm from template
   ovirt.ovirt.ovirt_vm:
     auth: "{{ ovirt_auth }}"
-    name: "{{ inventory_hostname }}"
+    name: "ursi_{{ inventory_hostname_short }}"
     template: "{{ ovirt_vm_tmpl }}"
     cluster: "{{ ovirt_vm_clust }}"
     storage_domain: "{{ ovirt_vm_store }}"
@@ -18,7 +18,7 @@
 - name: configure vm with cloud init
   ovirt.ovirt.ovirt_vm:
     auth: "{{ ovirt_auth }}"
-    name: "{{ inventory_hostname }}"
+    name: "ursi_{{ inventory_hostname_short }}"
     state: running
     cloud_init:
       host_name: "{{ inventory_hostname }}"
